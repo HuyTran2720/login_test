@@ -135,7 +135,7 @@ export default function signUp () {
                         </Button>
 
                         <p className="text-center"> Already a member? 
-                            <Link href={"login"} className="text-blue-500"> Login here </Link> 
+                            <Link href={"login"} className="text-blue-500"> Sign in </Link> 
                         </p>
                     </form>
                 </div>
