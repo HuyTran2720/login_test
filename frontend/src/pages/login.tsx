@@ -6,6 +6,7 @@ import { FormEvent, useState } from "react";
 import { Eye } from "lucide-react";
 import { EyeClosed } from "lucide-react";
 import { Loader2Icon } from "lucide-react"
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 import { Inter } from "next/font/google";
 const inter = Inter({
@@ -36,10 +37,35 @@ export default function login () {
             });
 
             const data = await res.json();
-            console.log("Login: ", data);
+            if (!data.error) {
+                toast.success('Login Successful!', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Bounce,
+                });
+                console.log(data);
+            } else {
+                toast.error('Invalid email or password.', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Bounce,
+                });
+            }
 
-        } catch (error) {
-
+        } catch (error) {   
+            console.error(`Error: ${error}`);
         } finally {
             setLoading(false);
         }
@@ -122,6 +148,20 @@ export default function login () {
                         </p>
                     </form>
                 </div>
+
+                <ToastContainer
+                    position="top-center"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick={false}
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover={false}
+                    theme="colored"
+                    transition={Bounce}
+                />
             </main>
         </div>
     );

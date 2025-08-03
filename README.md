@@ -15,4 +15,4 @@
    npx prisma studio
 
 ## Test Accounts (can also be accessed manually)
-1. 
+1. fukurdad@gmail.com password

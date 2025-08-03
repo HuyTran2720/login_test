@@ -6,6 +6,8 @@ import { FormEvent, useState } from "react";
 import { Eye } from "lucide-react";
 import { EyeClosed } from "lucide-react";
 import { Loader2Icon } from "lucide-react"
+import { useRouter } from "next/router";
+import { ToastContainer, toast, Bounce } from 'react-toastify';
 
 import { Inter } from "next/font/google";
 const inter = Inter({
@@ -23,12 +25,36 @@ export default function signUp () {
 
     const [ loading, setLoading ] = useState<boolean> (false);
 
+    const router = useRouter()
+
     const handleSignup = async (e: FormEvent) => {
         e.preventDefault();
         try {
             setLoading(true);
-            if (!validEmail() || !validPassword() || !validConPassword() || password !== confirmPass) {
-
+            if (!validEmail() || !validPassword() || !validConPassword()) {
+                toast.error('Some inputs are invalid. Please check and try again.', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Bounce,
+                });
+            } else if (password !== confirmPass) {
+                toast.error('Your password and confirmation password do not match.', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                    transition: Bounce,
+                });
             } else {
                 const res = await fetch("http://localhost:3001/users", {
                     method: "POST",
@@ -40,10 +66,23 @@ export default function signUp () {
                 });
 
                 const data = await res.json();
-                console.log("Signup: ", data);
+                if (!data.error) router.push("/login");
+                else {
+                    toast.error('Error signing up. Please try again.', {
+                        position: "top-center",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: false,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                        transition: Bounce,
+                    });
+                }
             }
         } catch (error) {
-
+            console.error(`Error signing up: ${error}`);
         } finally {
             setLoading(false);
         }
@@ -147,6 +186,20 @@ export default function signUp () {
                         </p>
                     </form>
                 </div>
+
+                <ToastContainer
+                    position="top-center"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick={false}
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover={false}
+                    theme="colored"
+                    transition={Bounce}
+                />
             </main>
         </div>
     );
