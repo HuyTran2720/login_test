@@ -23,16 +23,24 @@ export default function signUp () {
 
     const [ loading, setLoading ] = useState<boolean> (false);
 
-    const handleSignup = (e: FormEvent) => {
+    const handleSignup = async (e: FormEvent) => {
         e.preventDefault();
         try {
             setLoading(true);
             if (!validEmail() || !validPassword() || !validConPassword() || password !== confirmPass) {
 
             } else {
-                console.log("Success!");
-                console.log(email);
-                console.log(password);
+                const res = await fetch("http://localhost:3001/users", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await res.json();
+                console.log("Signup: ", data);
             }
         } catch (error) {
 
@@ -103,7 +111,7 @@ export default function signUp () {
                                     placeholder="Enter Password" 
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
-                                <Button onClick={() => setPassMasked(!passMasked)} className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent hover:bg-transparent hover:cursor-pointer"> 
+                                <Button type="button" onClick={() => setPassMasked(!passMasked)} className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent hover:bg-transparent hover:cursor-pointer"> 
                                     {passMasked ? <EyeClosed color="black" /> : <Eye color="black" />}
                                 </Button>
                             </div>
@@ -120,7 +128,7 @@ export default function signUp () {
                                     placeholder="Confirm Password" 
                                     onChange={(e) => setConPassword(e.target.value)}
                                 />
-                                <Button onClick={() => setConMasked(!passMasked)} className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent hover:bg-transparent hover:cursor-pointer"> 
+                                <Button type="button" onClick={() => setConMasked(!confirmMasked)} className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent hover:bg-transparent hover:cursor-pointer"> 
                                     {confirmMasked ? <EyeClosed color="black" /> : <Eye color="black" />}
                                 </Button>
                             </div>

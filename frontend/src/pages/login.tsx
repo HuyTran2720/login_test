@@ -21,17 +21,23 @@ export default function login () {
 
     const [ loading, setLoading ] = useState<boolean> (false);
 
-    const handleSignup = (e: FormEvent) => {
+    const handleLogin = async (e: FormEvent) => {
         e.preventDefault();
         try {
             setLoading(true);
-            if (!validEmail() || !validPassword()) {
 
-            } else {
-                console.log("Success!");
-                console.log(email);
-                console.log(password);
-            }
+            const res = await fetch("http://localhost:3001/user", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            const data = await res.json();
+            console.log("Login: ", data);
+
         } catch (error) {
 
         } finally {
@@ -69,7 +75,7 @@ export default function login () {
                     <p style={{ fontWeight: 700 }} className="text-2xl text-blue-500"> 
                         Login 
                     </p>
-                    <form onSubmit={(e)=> handleSignup(e)}
+                    <form onSubmit={(e)=> handleLogin(e)}
                         className="
                             w-7/10 h-[85%]
                             flex flex-col justify-between
@@ -97,7 +103,7 @@ export default function login () {
                                     placeholder="Enter Password" 
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
-                                <Button onClick={() => setPassMasked(!passMasked)} className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent hover:bg-transparent hover:cursor-pointer"> 
+                                <Button type="button" onClick={() => setPassMasked(!passMasked)} className="absolute right-0 top-1/2 -translate-y-1/2 bg-transparent hover:bg-transparent hover:cursor-pointer"> 
                                     {passMasked ? <EyeClosed color="black" /> : <Eye color="black" />}
                                 </Button>
                             </div>

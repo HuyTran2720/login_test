@@ -1,10 +1,16 @@
 import express from "express";
+import cors from "cors";
+import bcrypt from "bcrypt";
 import { PrismaClient } from "./generated/prisma/index.js";
 
 const app = express();
 const prisma = new PrismaClient();
+const saltRounds = 10;
 
 app.use(express.json());
+app.use(cors());
+
+// ! MANUALLY ACCESS DATABASE: npx prisma studio
 
 // fetching ALL users
 app.get("/users", async (req, res) => {
@@ -21,11 +27,9 @@ app.post("/user", async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await prisma.user.findFirstOrThrow({
-            where: { email, password }
-        });
+        const user = await prisma.user.findUnique({ where: { email } });
 
-        if (user) {
+        if (user && await bcrypt.compare(password, user.password)) {
             res.status(200).json(user);
         } else {
             res.status(404).json({ error: "User not found" });
@@ -40,8 +44,10 @@ app.post("/users", async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
         const newUser = await prisma.user.create({
-            data: { email, password },
+            data: { email, password: hashedPassword },
         });
 
         if (newUser) {
@@ -56,5 +62,5 @@ app.post("/users", async (req, res) => {
 });
 
 app.listen(3001, () => {
-    console.log("Server running on https://localhost:3001");
+    console.log("Server running on http://localhost:3001");
 });
